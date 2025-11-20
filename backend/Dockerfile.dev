@@ -1,0 +1,12 @@
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# Hot reload
+RUN npm install -g nodemon
+CMD ["nodemon", "src/index.js"]

@@ -1,0 +1,45 @@
+-The command npm i express sequelize pg pg-hstore bcrypt jsonwebtoken dotenv cors uuid installs several Node.js packages into a project. Each package serves a specific purpose in building a web application, often a RESTful API with user authentication and a PostgreSQL database.
+Here is a breakdown of what each package does:
+    * express: This is a fast, unopinionated, minimalist web framework for Node.js. It simplifies the process of building web applications and APIs by providing a robust set of features for routing, middleware, and request/response handling.
+    
+    * sequelize: This is a promise-based Node.js ORM (Object-Relational Mapper) for PostgreSQL, MySQL, MariaDB, SQLite, and SQL Server. It allows developers to interact with relational databases using JavaScript objects, abstracting away raw SQL queries.
+
+    * pg: This is a non-blocking PostgreSQL client for Node.js. It provides the necessary tools for connecting to and interacting with a PostgreSQL database.
+
+    * pg-hstore: This package is a Node.js module for serializing and deserializing JSON data to and from the PostgreSQL hstore format, which is a key-value store data type.
+
+    * bcrypt: This library is used for hashing passwords securely. It employs a strong, one-way hashing algorithm to protect user passwords, making them unreadable even if the database is compromised.
+
+    * jsonwebtoken: This package is used for implementing JSON Web Tokens (JWTs), a common method for secure authentication and authorization in web applications. It allows for the creation, signing, and verification of tokens.
+
+    * dotenv: This module loads environment variables from a .env file into process.env. This is crucial for managing sensitive information like database credentials or API keys without hardcoding them directly into the application code.
+
+    * cors: This is a Node.js package for providing a Connect/Express middleware that can be used to enable Cross-Origin Resource Sharing (CORS). This allows web browsers to make requests to a different domain than the one that served the initial page.
+
+    * uuid: This package generates universally unique identifiers (UUIDs), which are often used as unique IDs for database records or other entities in an application.
+
+-The command npm create vite@latest . -- --template react is used to quickly set up a new React project in the current directory using Vite, a modern and fast build tool. 
+Here is a breakdown of each part of the command:
+
+    * npm create: This is an npm command used to run a specified package to scaffold a new project. It is essentially a shorthand for npx create-....
+
+    * vite@latest: This specifies the name of the package to run (create-vite) and ensures the latest version is used (@latest). This tool is responsible for setting up the project's initial file structure and configuration.
+
+    * . : This argument specifies the destination directory for the new project. The single dot (.) tells the command to create the project files and folders in the current directory, rather than in a new subdirectory.
+
+    * -- : This is a crucial separator. It tells npm to stop parsing arguments for the npm create command itself and to pass all subsequent arguments directly to the executed package, which is create-vite in this case.
+
+    * --template react: This is an argument passed to create-vite. It instructs the scaffolding tool to use the pre-built React.js template (specifically a JavaScript variant by default, unless configured otherwise). This sets up the necessary React dependencies and configuration files in the project's package.json file. 
+
+
+- # start containers (first time may take a few minutes to download images)
+docker-compose up --build
+
+
+-Backend logs: Backend listening on 4000
+
+ * docker-compose logs backend to debug.
+
+ * Frontend reachable: http://localhost:3000
+
+ * Backend API health: http://localhost:4000/api/health

@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies first (cached)
+COPY package*.json ./
+RUN npm install
+
+# Copy rest of project
+COPY . .
+
+# Vite runs on 5173
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
