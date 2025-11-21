@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../api/client';
 
-export default function Login({ onAuth, onRegister }) {
+export default function Login({ onAuth, onRegister, admin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState(null);
@@ -10,7 +10,7 @@ export default function Login({ onAuth, onRegister }) {
     e.preventDefault();
     setErr(null);
     try {
-      const res = await api('/auth/login', { method: 'POST', body: { email, password }, credentials: 'include' });
+      const res = await api('/auth/login', { method: 'POST', body: { email, password, admin }, credentials: 'include' });
       onAuth(res.token, res.user);
     } catch (e) {
       setErr(e.message);

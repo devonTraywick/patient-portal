@@ -32,7 +32,7 @@ export default function Register({onBack}) {
       </div>
       <div className="flex justify-center mt-4">
         <button type="button" className="text-sm !text-gray-500 !bg-transparent underline" onClick={onBack}>
-          {"\< "}Back to login
+          {"< "}Back to login
         </button>
       </div>
     </form>

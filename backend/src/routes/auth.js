@@ -57,11 +57,19 @@ router.post('/register', async (req, res) => {
 //Login
 router.post('/login', async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const {email, password, admin} = req.body;
         if(!email || !password) return res.status(400).json({message: 'Email and password are required'});
 
-        const user = await User.findOne({where: {email}});
+        let user
+        if(admin){
+            user = await User.findOne({where: {email, role: 'admin'}})
+        }else{
+            user = await User.findOne({where: {email, role: 'patient'}});
+        }
+        
         if(!user) return res.status(401).json({message: 'Invalid credentials'});
+
+        if(user.role === 'patient'){const patient = await Patient.findOne({where: {userId: user.id}})}
 
         const ok = await bcrypt.compare(password, user.passwordHash);
         if(!ok) return res.status(401).json({message: 'Invalid credentials'});
@@ -74,8 +82,9 @@ router.post('/login', async (req, res) => {
             sameSite: 'strict',
             maxAge: 1 * 24 * 60 * 60 * 1000
         });
-
-        res.json({token: accessToken, user: {id: user.id, email: user.email, fullName: user.fullName}});
+        let userJson = admin ? {id: user.id, email: user.email, fullName: user.fullName, password: user.password} :
+                                {id: user.id, email: user.email, fullName: user.fullName, password: user.password, patient: patient}
+        res.json({token: accessToken, user: userJson});
     } catch (err) {
         console.error('Login error: ', err);
         res.status(500).json({message: 'Internal server error'});
@@ -107,5 +116,40 @@ router.post("/logout", (req, res) => {
   return res.json({ message: "Logged out" });
 });
 
+//Login
+router.put('/update', async (req, res) => {
+    try {
+        const {email, oldPassword, newPassword, phone, address} = req.body;
+        if(!email || !oldPassword) return res.status(400).json({message: 'Email and password are required'});
+
+        const existingUser = await User.findOne({where: {email}});
+        if(existingUser){
+            const passMatch = await bcrypt.compare(oldPassword, existingUser.passwordHash);
+            if(passMatch && newPassword.length > 0){
+                console.log("In password Change")
+                existingUser.passwordHash = await bcrypt.hash(newPassword, 10);
+                let updates = {passwordHash: existingUser.passwordHash};
+                await existingUser.update(updates);
+            };
+
+            const patient = await Patient.findOne({where: {userId: existingUser.id}});
+
+            if(patient){
+                patient.phone = phone;
+                patient.address = address;
+                let updates = {phone: patient.phone, address: patient.address};
+                await patient.update(updates);
+            }
+
+            return res.json({
+                message: "Updated Successfully",
+                user: {id: existingUser.id, email: existingUser.email, fullName: existingUser.fullName, password: existingUser.password, patient: patient}
+            })
+        }
+    } catch (err) {
+        console.error('Update error: ', err);
+        res.status(500).json({message: 'Internal server error'});
+    }
+});
 
 module.exports = router;

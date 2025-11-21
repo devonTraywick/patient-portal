@@ -1,6 +1,8 @@
 
 
-export default function Header() {
+export default function Header({admin, onAdmin, user}) {
+  let userLoggedIn;
+  if(user){userLoggedIn = true;}else{userLoggedIn = false;}
   return (
     <header className="app-header bg-blue-900 min-h-24 !mb-8">
         <div className="flex justify-center w-full">
@@ -105,7 +107,14 @@ export default function Header() {
             <div className="flex-1 text-center flex flex-col justify-end">
                 <h1 className="text-white text-4xl font-semibold">USA Health</h1>
             </div>
-            <div className="flex-1"></div>
+            <div className="flex flex-1 justify-end">
+                <div className="mt-auto">
+                    <button className="!bg-transparent underline text-white text-sm float-right mr-2"
+                        onClick={onAdmin} hidden={userLoggedIn}>
+                        {admin? ('Patient Portal') : ('Admin Portal')} {'>'}
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
   );

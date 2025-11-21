@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
 import AppointmentForm from './appointmentForm';
 import Header from './header';
+import EditProfile from './editProfile';
 
-export default function Dashboard({ token, user, onLogout }) {
+export default function Dashboard({ token, user: initialUser, onLogout, admin }) {
   const [appts, setAppts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editProfile, setEditProfile] = useState(false);
+  const [user, setUser] = useState(initialUser);
 
   const fetchAppts = async () => {
     try {
@@ -43,53 +46,76 @@ export default function Dashboard({ token, user, onLogout }) {
 
   return (
     <div className="dashboard">
-      <Header />
-      <div className="text-left mb-8 text-xl pl-4">
-        <h2>Welcome, {user.fullName || user.email}</h2>
-        {/* <button onClick={onLogout}>Logout</button> */}
+      <Header user={user}/>
+      <div className="mb-8 pl-4 flex align-middle">
+        <div className='text-left text-xl flex-1 align-middle'>
+          <h2>Welcome, {user.fullName || user.email}</h2>
+        </div>
+        <div className='flex-1 align-middle'>
+          <button className='float-right mr-5 !bg-blue-900' 
+            hidden={editProfile} 
+            onClick={() => setEditProfile(true)}>
+              Edit Profile
+          </button>
+        </div>
       </div>
 
       <section>
-        <h3 className="text-center mb-2 text-xl font-medium underline underline-offset-2">Your Appointments</h3>
-        <div className="w-full flex flex-col items-center">
-          {loading ? <div>Loading...</div> : (
-            appts.length ? 
-              <div className='mb-4'>
-                <table className="w-full border-separate border-spacing-5 text-center">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Provider</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {appts.map(a => (
-                      <tr key={a.id}>
-                        <td>{new Date(a.appointmentDate).toLocaleString().split(',', 1)}</td>
-                        <td>{a.providerName}</td>
-                        <td>{a.status}</td>
-                        <td>
-                          <div className='flex justify-center'>
-                            <div className='text-center'>
-                              <button className='!bg-transparent cursor-pointer' onClick={() => deleteAppt(a.id)}>
-                                <i className='bx bx-trash bx-sm text-red-500'></i>
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div> : <div className='mb-4'>No appointments</div>
-          )}
-          <AppointmentForm token={token} onCreated={() => fetchAppts()} />
-          <div className='mt-8'>
-            <button className='!bg-red-500' onClick={onLogout}>Logout</button>
+        {editProfile ? (
+          <EditProfile
+            user={user}
+            onBack={(updatedUser) => {
+              if (updatedUser) setUser(updatedUser);
+              setEditProfile(false);
+            }}
+          />
+        ) : (
+          <div>
+            {admin ? (<div> <h3 className="text-center mb-2 text-xl font-medium underline underline-offset-2">Your Appointments</h3>
+            <div className="w-full flex flex-col items-center">
+              {loading ? <div>Loading...</div> : (
+                appts.length ? 
+                  <div className='mb-4'>
+                    <table className="w-full border-separate border-spacing-5 text-center">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Provider</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {appts.map(a => (
+                          <tr key={a.id}>
+                            <td>{new Date(a.appointmentDate).toLocaleString().split(',', 1)}</td>
+                            <td>{a.providerName}</td>
+                            <td>{a.status}</td>
+                            <td>
+                              <div className='flex justify-center'>
+                                <div className='text-center'>
+                                  <button className='!bg-transparent cursor-pointer' onClick={() => deleteAppt(a.id)}>
+                                    <i className='bx bx-trash bx-sm text-red-500'></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div> : <div className='mb-4'>No appointments</div>
+              )}
+              <AppointmentForm token={token} onCreated={() => fetchAppts()} />
+              <div className='mt-8'>
+                <button className='!bg-red-500' onClick={onLogout}>Logout</button>
+              </div>
+            </div> </div>) : (
+              <h3>Provider Management</h3>
+              
+            )}
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

@@ -87,7 +87,7 @@ export default function AppointmentForm({ token, onCreated }) {
       
       <input type="datetime-local" value={dateTime} onChange={e => setDateTime(e.target.value)} />
       <textarea placeholder="Reason" value={reason} onChange={e => setReason(e.target.value)} />
-      <button type="submit">Schedule</button>
+      <button className='!bg-blue-900' type="submit">Schedule</button>
     </form>
   );
 }

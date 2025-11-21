@@ -9,6 +9,7 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [showRegister, setShowRegister] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   const onAuth = (t, u) => {
     setToken(t);
@@ -58,14 +59,14 @@ export default function App() {
   if (!token) {
     return (
       <div className='h-full w-full'>
-        <Header />
+        <Header admin={admin} onAdmin={() => setAdmin(!admin)} user={null}/>
         <div className="container">
-          <h1 className='text-3xl text-center font-bold mb-4'>Patient Portal</h1>
+          <h1 className='text-3xl text-center font-bold mb-4'>{admin? ("Admin Portal") : ("Patient Portal")}</h1>
           <div className="forms p-5">
             {showRegister ? (
               <Register onBack={() => setShowRegister(false)} />
             ) : (
-              <Login onAuth={onAuth} onRegister={() => setShowRegister(true)} />
+              <Login onAuth={onAuth} onRegister={() => setShowRegister(true)} admin={admin} />
             )}
           </div>
         </div>
@@ -73,5 +74,5 @@ export default function App() {
     );
   }
 
-  return <Dashboard token={token} user={user} onLogout={logout} />;
+  return <Dashboard token={token} user={user} onLogout={logout} admin={admin} />;
 }
